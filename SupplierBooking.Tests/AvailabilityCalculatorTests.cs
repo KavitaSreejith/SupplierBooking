@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Domain;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -13,7 +8,6 @@ using NodaTime.Testing;
 using SupplierBooking.Domain;
 using SupplierBooking.Domain.Interfaces;
 using SupplierBooking.Infrastructure.Services;
-using Xunit;
 
 namespace SupplierBooking.Tests
 {
