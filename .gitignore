@@ -1,0 +1,12 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/SupplierBooking/CopilotIndices/17.13.430.18484
+/.vs
+/SupplierBooking/bin/Debug/net8.0
+/SupplierBooking/obj
+/SupplierBooking.ConsoleApp/bin/Debug/net8.0
+/SupplierBooking.ConsoleApp/obj
+/SupplierBooking.Tests/bin
+/SupplierBooking.Tests/obj
