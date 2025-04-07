@@ -2,7 +2,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SupplierBooking.Domain.Interfaces;
 using SupplierBooking.Infrastructure.Services;
-using System;
 
 namespace SupplierBooking.Infrastructure
 {
@@ -19,7 +18,7 @@ namespace SupplierBooking.Infrastructure
 		public static IServiceCollection AddOptimizedServices(this IServiceCollection services)
 		{
 			if (services == null)
-				throw new ArgumentNullException(nameof(services));
+                throw new ArgumentNullException(nameof(services));
 
 			// Replace standard implementations with optimized ones
 			services.AddScoped<IBusinessDayCalculator, BusinessDayCalculator>();

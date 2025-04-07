@@ -6,11 +6,6 @@ using Moq;
 using NodaTime;
 using SupplierBooking.Domain.Interfaces;
 using SupplierBooking.Infrastructure.Services;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace SupplierBooking.Tests
 {

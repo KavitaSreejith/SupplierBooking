@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection.Emit;
-using Microsoft.EntityFrameworkCore;
-using NodaTime;
 
 namespace SupplierBooking.Infrastructure.Data
 {

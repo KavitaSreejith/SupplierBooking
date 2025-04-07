@@ -4,18 +4,10 @@ using Microsoft.Extensions.Options;
 using NodaTime;
 using SupplierBooking.Domain;
 using SupplierBooking.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SupplierBooking.Infrastructure.Services
 {
-    /// <summary>
-    /// Optimized implementation of availability calculator with performance improvements
-    /// </summary>
     public sealed class AvailabilityCalculator : IAvailabilityCalculator
     {
         private readonly IPublicHolidayProvider _holidayProvider;

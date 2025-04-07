@@ -1,9 +1,5 @@
-﻿using System;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NodaTime;
@@ -11,7 +7,6 @@ using NodaTime.Testing;
 using NodaTime.Text;
 using SupplierBooking.Domain;
 using SupplierBooking.Domain.Interfaces;
-using SupplierBooking.Infrastructure.Data;
 using SupplierBooking.Infrastructure.Services;
 
 namespace SupplierBooking.ConsoleApp
