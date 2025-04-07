@@ -80,54 +80,58 @@ namespace SupplierBooking.Infrastructure.Services
 
             var holidays = await holidayTask;
             var sequences = await sequencesTask;
-
-            // *** Special case handling for Easter 2025 ***
-            // This is a direct solution to pass the specific test cases
-            var refYear = normalizedNow.Year;
-            var refMonth = normalizedNow.Month;
-            var refDay = normalizedNow.Day;
-            var refHour = normalizedNow.Hour;
-            var refMinute = normalizedNow.Minute;
-
-            // Check for the specific test scenarios
-            if (refYear == 2025 && refMonth == 4)
+            // Dynamically handle any multi-day holiday sequence using general logic
+            foreach (var sequence in sequences)
             {
-                if (refDay == 15)
-                {
-                    // Test case 1: Before cutoff (Tue 15 April 2025)
-                    // Simply return next day (April 16)
-                    return new SupplierAvailabilityResult(
-                        new LocalDate(2025, 4, 16),
-                        new List<PublicHoliday>(),
-                        false,
-                        null);
-                }
-                else if (refDay == 16 && ((refHour == 11 && refMinute == 59) || (refHour < 12)))
-                {
-                    // Test case 2: Just before cutoff (Wed 16 April 2025, before 12:00pm)
-                    // Return Tuesday after Easter (April 22)
-                    return new SupplierAvailabilityResult(
-                        new LocalDate(2025, 4, 22),
-                        new List<PublicHoliday>(),
-                        false,
-                        null);
-                }
-                else if ((refDay == 16 && refHour >= 12) || refDay > 16)
-                {
-                    // Test case 3 & 4: At or after cutoff
-                    // Return Wednesday after Easter (April 23)
-                    var easterHolidays = holidays
-                        .Where(h => h.Date >= new LocalDate(2025, 4, 18) && h.Date <= new LocalDate(2025, 4, 21))
-                        .ToList();
+                var sequenceStart = sequence.FirstDate;
+                var sequenceEnd = sequence.LastDate;
 
-                    var cutoffTime = new LocalDateTime(2025, 4, 16, 12, 0, 0)
-                        .InZoneStrictly(tzProvider);
+                // Calculate the cutoff date and time for this sequence
+                var cutoffDate = await CalculateTwoBusinessDaysBeforeAsync(
+                    sequenceStart, state, cancellationToken).ConfigureAwait(false);
 
-                    return new SupplierAvailabilityResult(
-                        new LocalDate(2025, 4, 23),
-                        easterHolidays,
-                        true,
-                        cutoffTime);
+                var cutoffTime = cutoffDate.At(_options.CutoffTime).InZoneStrictly(tzProvider);
+
+                // Skip this logic if we're clearly before the cutoff date
+                if (normalizedNow.Date < cutoffDate)
+                {
+                    continue; // This request is far enough ahead — normal logic should apply
+                }
+
+                // If we're past the cutoff logic applies
+                var hasPassedCutoff = normalizedNow.ToInstant() >= cutoffTime.ToInstant();
+
+                // We only block during/after the sequence if we're within the relevant cutoff window
+                if (normalizedNow.Date >= cutoffDate && normalizedNow.Date <= sequenceEnd)
+                {
+                    if (!hasPassedCutoff)
+                    {
+                        var nextAvailable = await _businessDayCalculator
+                            .GetNextBusinessDayAsync(sequenceEnd, state, cancellationToken)
+                            .ConfigureAwait(false);
+
+                        return new SupplierAvailabilityResult(
+                            nextAvailable,
+                            sequence.Holidays.ToList(),
+                            false,
+                            cutoffTime);
+                    }
+                    else
+                    {
+                        var blockedDay = await _businessDayCalculator
+                            .GetNextBusinessDayAsync(sequenceEnd, state, cancellationToken)
+                            .ConfigureAwait(false);
+
+                        var availableDay = await _businessDayCalculator
+                            .GetNextBusinessDayAsync(blockedDay, state, cancellationToken)
+                            .ConfigureAwait(false);
+
+                        return new SupplierAvailabilityResult(
+                            availableDay,
+                            sequence.Holidays.ToList(),
+                            true,
+                            cutoffTime);
+                    }
                 }
             }
 
